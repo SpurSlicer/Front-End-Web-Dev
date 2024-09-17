@@ -1,0 +1,71 @@
+#root {
+  max-width: calc(100vw - 20px);
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  background-image: radial-gradient(
+    rgba(255, 0, 0, 0.15) 0%,
+    rgba(255, 154, 0, 0.15) 10%,
+    rgba(208, 222, 33, 0.15) 20%,
+    rgba(79, 220, 74, 0.15) 30%,
+    rgba(63, 218, 216, 0.15) 40%,
+    rgba(47, 201, 226, 0.15) 50%,
+    rgba(28, 127, 238, 0.15) 60%,
+    rgba(95, 21, 242, 0.15) 70%,
+    rgba(186, 12, 248, 0.15) 80%,
+    rgba(251, 7, 217, 0.15) 90%,
+    rgba(255, 0, 0, 0.15) 100%
+  );
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.float-left, .float-right {
+  position:fixed;
+  width: calc(48vw - 80px);
+  height: 100px;
+  bottom: 20px;
+  border-radius: 75px;
+  border-style: solid;
+  resize: none;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: black;
+  font-size: 30px;
+}
+
+.float-left {
+  left: 20px;
+  color: rgba(0,230,255,1);
+  border-color: rgba(0,54,255,1);
+  background-image: linear-gradient(153deg, rgba(0,54,255,0.2)  0%, rgba(0,230,255,0.2)  100%);
+  background-repeat: no-repeat;
+  background-size: auto;
+}
+
+.float-right {
+  right: 20px;
+  color: rgba(255,0,213,1);
+  border-color: rgba(156,0,255,1);
+  background-image: linear-gradient(153deg, rgba(255,0,213,0.2) 0%, rgba(156,0,255,0.2) 100%);
+  background-repeat: no-repeat;
+  background-size: auto;
+}
+
+.message-container {
+  height: calc(100vh - 225px);
+  display:flex;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
