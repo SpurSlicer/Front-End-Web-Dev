@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
-import viteLogo from '/vite.svg'
 import './App.css'
 import loading from './assets/loading.gif'
 
 const TOTAL_PLANTS = 10;
+const TOKEN = import.meta.env.VITE_TOKEN;
 
 function App() {
   const [state, setState] = useState(5);
@@ -85,7 +85,7 @@ function App() {
   function allPlants() {
     if (plantCardsAll.length == 0) setLoading();
     pageAll += 1;
-    return axios.get(`https://perenual.com/api/species-list?key=sk-BlXS6705c00e092f67181&page=${pageAll}`)
+    return axios.get(`https://perenual.com/api/species-list?key=${TOKEN}&page=${pageAll}`)
       .then ((response) => {
         let plantData = [];
         for (const temp_response of response.data.data)
@@ -107,7 +107,7 @@ function App() {
     let rand_id;
     while (randIds.includes((rand_id = Math.floor(Math.random() * TOTAL_PLANTS)+1)));
     randIds.push(rand_id);
-    return axios.get(`https://perenual.com/api/species/details/${rand_id}?key=sk-BlXS6705c00e092f67181`)
+    return axios.get(`https://perenual.com/api/species/details/${rand_id}?key=${TOKEN}`)
       .then ((response) => {
         let plantData = [];
         plantData.push(response.data);

@@ -96,7 +96,7 @@ body {
 .map {
   margin: 0px;
   max-width: 95vw;
-  max-height: calc(195vh - 100px);
+  max-height: calc(95vh - 100px);
 }
 
 .plants {
