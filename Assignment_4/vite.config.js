@@ -7,7 +7,7 @@ export default defineConfig(() => {
   return {
     plugins: [react(), vercel()],
     define: {
-      __APP_ENV__: process.env.VITE_TOKEN,
+      "__APP_ENV__": process.env.VITE_TOKEN,
     }
   }
 });
