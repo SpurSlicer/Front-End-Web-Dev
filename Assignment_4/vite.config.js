@@ -6,8 +6,8 @@ import vercel from 'vite-plugin-vercel'
 export default defineConfig(() => {
   return {
     plugins: [react(), vercel()],
-    define: {
+    /*define: {
       "__APP_ENV__": process.env.VITE_TOKEN,
-    }
+    }*/
   }
 });
