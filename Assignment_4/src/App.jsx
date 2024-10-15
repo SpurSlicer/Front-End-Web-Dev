@@ -131,7 +131,7 @@ function App() {
         <div className="menubar">
           <div className="opt all_plants" onClick={() => setState(0)}>All Plants</div>
           <div className="opt plants_by_region" onClick={() => setState(1)}>Plants by Region</div>
-          <input className="search" type="text"/>
+          <input className="search" type="text" placeholder='Search...'/>
           <div className="opt favorites" onClick={() => setState(2)}>Favorites </div>
           <div className="opt random" onClick={() => setState(3)}>Random</div>
         </div>
