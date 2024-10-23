@@ -50,11 +50,14 @@ function App() {
             <div className="box">
               <p className="begin">Try right clicking a plant card to favorite it!</p>
             </div>);
-        else 
+        else {
+          const favorites_data = [];
+          for (const favorite of favorites) favorites_data.push(favorite.card);
           setData(
             <div className="plants">
-              {favorites}
+              {favorites_data}
             </div>);
+        }
       }
     } else if (state == 3) { // random
       randPlant()
@@ -121,7 +124,6 @@ function App() {
         handleChange(-1);
         //plantCards;
       });
-    console.log();
   }
 
   function setLoading() { setData(<div className="box">
@@ -139,11 +141,25 @@ function App() {
     setInfo(<></>);
   }
 
-  function generatePlantCard(id, name, img, species, cycle, watering) {
-    const class_name = `plant plant${Math.floor(Math.random()*5 + 1)}`;
+  function generatePlantCard(id, name, img, species, cycle, watering, flag) {
+    let class_name = `plant plant${Math.floor(Math.random()*100 + 1)}`;
+    if (flag) class_name += " favorite";
+    else { 
+      for (const favorite of favorites) {
+        console.log (favorite.id, id);
+        if (favorite.id == id) {
+          class_name += " favorite";
+          break;
+        }
+      } 
+    }
     return (   
-      <button className={class_name} id={id} onAuxClick={(event) => findFavorite(event.currentTarget.id)} onClick={(event) => displayInfoCard(event.currentTarget.id, event.currentTarget.className)}>
-        <h1>{name}</h1>
+      <button className={class_name} id={id} onAuxClick={(event) => findFavorite(event.currentTarget)} onClick={(event) => displayInfoCard(event.currentTarget.id, event.currentTarget.className)}>
+        <div className="header">
+          <div className='heart'></div>
+          <h1>{name}</h1>
+          <div className='heart'></div>
+        </div>
         <img src={img}></img>
         <h3>{species}</h3>
         <hr/>
@@ -155,7 +171,7 @@ function App() {
     );
   }
 
-  function generatePlantsFromSearch(json) {
+  function generatePlantsFromSearch(json, flag=false) {
     let cards = [];
     for (const ob of json) {
       cards.push(generatePlantCard(
@@ -164,7 +180,8 @@ function App() {
         (ob.default_image == null) ? ("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fpreviews%2F005%2F337%2F799%2Foriginal%2Ficon-image-not-found-free-vector.jpg&f=1&nofb=1&ipt=36eaad571bfa0acf07e3a3af59d449f7b9ab1cdd9cec517a9f2611bc570d3ffc&ipo=images") : (ob.default_image.original_url), 
         ob.scientific_name[0], 
         ob.cycle,
-        ob.watering));
+        ob.watering,
+        flag));
     }
     return cards;
   }
@@ -221,7 +238,6 @@ function App() {
         const temp_plant_cards = generatePlantsFromSearch(plantData);
         for (const temp_plant_card of temp_plant_cards)
           plantCardsSearch.push(temp_plant_card);
-        console.log(plantCardsSearch);
         //return plantCards;
       })
       .catch((error) => {
@@ -231,20 +247,41 @@ function App() {
       });
   }
   
-  async function findFavorite(id) {
-    await axios.get(`https://perenual.com/api/species/details/${id}?key=${TOKEN}`)
+  async function findFavorite(currentTarget) {
+    await axios.get(`https://perenual.com/api/species/details/${currentTarget.id}?key=${TOKEN}`)
       .then ((response) => {
         let plantData = [];
-        for (const temp_response of response.data)
-          plantData.push(temp_response);
-        const temp_plant_cards = generatePlantsFromSearch(plantData);
-        for (const temp_plant_card of temp_plant_cards) {
-          if (!favorites.includes(temp_plant_card)) favorites.push(temp_plant_card);
+        plantData.push(response.data);
+        const temp_plant_card = generatePlantsFromSearch(plantData, true)[0];
+        let status_flag = false;
+        for (const favorite of favorites) {
+          if (favorite.id == currentTarget.id) {
+            status_flag = true;
+            break;
+          } 
+        }
+        if (!status_flag) {
+          currentTarget.className += " favorite"
+          favorites.push({"id": currentTarget.id, "card": temp_plant_card});
+          console.log("added " + currentTarget.id + " of " + currentTarget.className + " to favorites");
+        } else {
+          let splice_index = -1;
+          for (let i = 0; i < favorites.length; i++) {
+            if (favorites[i].id == currentTarget.id) {
+              splice_index = i;
+              break;
+            }
+          }
+          if (splice_index > -1) {
+            favorites.splice(splice_index, 1);
+            currentTarget.className = currentTarget.className.replace(" favorite", "");
+            console.log("removed " + currentTarget.id + " of " + currentTarget.className + " to favorites");
+          } else console.log("error in removing thing");
         }
         //return plantCards;
       })
       .catch((error) => {
-        console.error("could not find favorite of id: ", id, error);
+        console.error("could not find favorite of id: ", currentTarget.id, error);
         //handleChange(-1);
         //plantCards;
       });
@@ -296,7 +333,7 @@ function App() {
   
 /* <pre>{JSON.stringify(plantData, null, 2)}</pre> */
   return (
-  <>
+  <div className='body'>
     {info}
     <div className="main">
         <div className="menubar">
@@ -307,7 +344,7 @@ function App() {
         </div>
         {data}
     </div>
-  </>
+  </div>
   )
 }
 
