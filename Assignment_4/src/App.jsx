@@ -3,7 +3,7 @@ import axios from 'axios';
 import './App.css'
 import loading from './assets/loading.gif'
 
-const TOTAL_PLANTS = 10;
+const TOTAL_PLANTS = 100;
 const TOKEN = import.meta.env.VITE_TOKEN;
 
 let plantCardsAll = [];
@@ -15,6 +15,7 @@ let pageSearch = 0;
 let currentSearch = "";
 let currentState = 0;
 let deleteFlag = true;
+let foreverFlag = true;
 let favorites = [];
 
 function App() {
@@ -28,6 +29,15 @@ function App() {
     console.log(`state: ${state}`);
     currentState = state;
     //console.log(allPlants());
+    if (state != 0) {
+      plantCardsAll = [];
+      pageAll = 0;
+    } else if (state != 3) {
+      plantCardsRand = [];
+    } else if (state != 4) {
+      plantCardsSearch = [];
+      pageSearch = 0;
+    }
     if (state == 0) { // all plants
       allPlants().then(() => {
         if (currentState == -1) handleChange(currentState);
@@ -82,10 +92,33 @@ function App() {
         <div className="box">
           <p className="error">Oops! API thing is probably out of usages. Rip.</p>
         </div>);
-    } else if (state == -2) { // blank
-      setData(<></>);
     }
   }
+
+  /*document.addEventListener("keydown", (e) => {
+    if (e.key == "Delete" && deleteFlag) {
+      console.log("delete key pressed");
+      deleteFlag = false;
+      if (currentState == 0) {
+        plantCardsAll = [];
+        pageAll = 0;
+      } else if (currentState == 3) {
+        plantCardsRand = [];
+      } else if (currentState == 4) {
+        plantCardsSearch = [];
+        pageSearch = 0;
+      }
+      if (foreverFlag) {
+        document.addEventListener("keyup", (e) => {
+          if (e.key == "Delete") {
+            if (!deleteFlag) deleteFlag = !deleteFlag;
+            handleChange(-2);
+          }
+        });
+        foreverFlag = false;
+      }
+    }
+  });*/
 
   function displayInfoCard(id, class_name) {
     const class_name_background = "info_card " + class_name.replace("plant ", "");
@@ -93,7 +126,6 @@ function App() {
     axios.get(`https://perenual.com/api/species/details/${id}?key=${TOKEN}`)
       .then ((response) => {
         const data = response.data;
-        console.log(data);
         setInfo(
           <button className="main_info" onClick={() => resetInfo()}>
             <div className={class_name_background}>
@@ -142,32 +174,34 @@ function App() {
   }
 
   function generatePlantCard(id, name, img, species, cycle, watering, flag) {
-    let class_name = `plant plant${Math.floor(Math.random()*100 + 1)}`;
+    let class_name = `plant plant${Math.floor(Math.random()*5 + 1)}`;
     if (flag) class_name += " favorite";
     else { 
       for (const favorite of favorites) {
-        console.log (favorite.id, id);
         if (favorite.id == id) {
+          console.log("favorite found for plant ", name);
           class_name += " favorite";
           break;
         }
       } 
     }
     return (   
-      <button className={class_name} id={id} onAuxClick={(event) => findFavorite(event.currentTarget)} onClick={(event) => displayInfoCard(event.currentTarget.id, event.currentTarget.className)}>
-        <div className="header">
-          <div className='heart'></div>
-          <h1>{name}</h1>
-          <div className='heart'></div>
-        </div>
-        <img src={img}></img>
-        <h3>{species}</h3>
-        <hr/>
-        <ul>
-          <li>♻️: {cycle}</li>
-          <li>🌊: {watering}</li>
-        </ul>
-      </button>
+      <div className='plant_box'>
+        <button className={class_name} id={id} onAuxClick={(event) => findFavorite(event.currentTarget)} onClick={(event) => displayInfoCard(event.currentTarget.id, event.currentTarget.className)}>
+          <div className="header">
+            <div className='heart'></div>
+            <h1>{name}</h1>
+            <div className='heart'></div>
+          </div>
+          <img src={img}></img>
+          <h3>{species}</h3>
+          <hr/>
+          <ul>
+            <li>♻️: {cycle}</li>
+            <li>🌊: {watering}</li>
+          </ul>
+        </button>
+      </div>
     );
   }
 
@@ -189,7 +223,6 @@ function App() {
   function allPlants() {
     if (plantCardsAll.length == 0) setLoading();
     pageAll += 1;
-    console.log(pageAll);
     return axios.get(`https://perenual.com/api/species-list?key=${TOKEN}&page=${pageAll}`)
       .then ((response) => {
         let plantData = [];
@@ -293,7 +326,6 @@ function App() {
       pageSearch = 0;
       currentSearch = search;
     } 
-    console.log(currentSearch, pageSearch);
     handleChange(4);
   }
   document.oncontextmenu = document.body.oncontextmenu = function() {return false;}
@@ -308,28 +340,6 @@ function App() {
       </button>
     )*/
   }
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key == "Delete" && deleteFlag) {
-      deleteFlag = false;
-      if (currentState == 0) {
-        plantCardsAll = [];
-        pageAll = 0;
-      } else if (currentState == 3) {
-        plantCardsRand = [];
-      } else if (currentState == 4) {
-        plantCardsSearch = [];
-        pageSearch = 0;
-      }
-      handleChange(-2);
-    }
-  });
-
-  document.addEventListener("keyup", (e) => {
-    if (e.key == "Delete") {
-      if (!currentSearch) currentSearch = !currentSearch;
-    }
-  })
   
 /* <pre>{JSON.stringify(plantData, null, 2)}</pre> */
   return (
