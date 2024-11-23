@@ -1,0 +1,26 @@
+.categories { 
+    grid-area: 1 / 1 / 2 / 2; 
+    height: 100%;
+    width: 100%;
+}
+.categories .catgory {
+    height: fit-content;
+    width: inherit;
+}
+.categories .category label {
+    color: inherit;
+}
+.categories .category button {
+    height: fit-content;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    color: inherit;
+    text-align: left;
+}
+.categories .category button:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.current_messages { 
+    grid-area: 1 / 2 / 2 / 3; 
+} 
